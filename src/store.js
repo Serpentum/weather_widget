@@ -3,7 +3,6 @@ import weatherWidgetReducer from "./redux/weatherWidgetReducer"
 import createSagaMiddleware from 'redux-saga'
 import {weatherWidgetWatcher} from "./sagas/weatherWidgetWatcher"
 
-
 const sagaMiddleware = createSagaMiddleware();
 const middlewares = [sagaMiddleware];
 
@@ -15,3 +14,4 @@ export const store = configureStore({
 })
 
 sagaMiddleware.run(weatherWidgetWatcher);
+

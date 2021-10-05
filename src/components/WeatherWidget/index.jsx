@@ -1,21 +1,57 @@
 import React, {useEffect} from 'react';
-import {useDispatch} from "react-redux"
-import {getForecast} from "../../redux/weatherWidgetReducer"
+import {useDispatch, useSelector} from "react-redux"
+import styled from "styled-components";
+import {getForecast, getGeocode, getWeather, setCity} from "../../redux/weatherWidgetReducer"
+import WeatherWidgetHeader from "./WeatherWidgetHeader"
+import WeatherWidgetContent from "./WeatherWidgetContent"
+
+const defaultCity = 'Togliatti'
+
+export const getIconPath = id => `http://openweathermap.org/img/wn/${id}.png`
 
 const WeatherWidget = () => {
 
   const dispatch = useDispatch()
+  const currentCity = useSelector(store => store.weatherWidget.currentCity)
+
+  const geoSuccess = location => {
+    const {coords} = location
+    const {latitude, longitude} = coords
+    dispatch(getGeocode({latitude, longitude}))
+  }
+
+  const geoError = () => {
+    dispatch(setCity(defaultCity))
+  }
+
+  // try get user position, if not, set default city
+  useEffect(() => {
+    if(!currentCity) {
+      navigator.geolocation.getCurrentPosition(geoSuccess, geoError)
+    }
+  }, []);
 
   useEffect(() => {
-    dispatch(getForecast())
-  }, []);
+    if(currentCity) {
+      dispatch(getWeather(currentCity.en))
+      dispatch(getForecast(currentCity.en))
+    }
+  }, [currentCity])
 
 
   return (
-    <div>
+    <WidgetWrapper>
+      <WeatherWidgetHeader />
+      {/*component composition demonstrating below*/}
+      <WeatherWidgetContent>
 
-    </div>
+      </WeatherWidgetContent>
+    </WidgetWrapper>
   );
 };
 
 export default WeatherWidget;
+
+const WidgetWrapper = styled.div`
+  width: 800px;
+`
