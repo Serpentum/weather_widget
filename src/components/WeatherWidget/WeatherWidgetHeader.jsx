@@ -1,15 +1,17 @@
 import React, {memo, useEffect, useState} from "react";
 import styled from "styled-components";
-import {useSelector} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import moment from "moment"
 import 'moment/locale/ru';
 import {getIconPath} from "./index"
+import Select from "../UI/Select"
+import {setCity} from "../../redux/weatherWidgetReducer"
 
 function capitalizeFirstLetter(string) {
   if(string) return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function identifyLetter(deg) {
+export function identifyLetter(deg) {
   let letter = ''
   if(deg > 0) {
     letter = '+'
@@ -20,7 +22,20 @@ function identifyLetter(deg) {
   return letter
 }
 
+const citySelectArrMOC = [
+  {
+    ru: 'Москва',
+    en: 'Moscow',
+  },
+  {
+    ru: 'Тольятти',
+    en: 'Togliatti',
+  },
+]
+
 const WeatherWidgetHeader = ({citySelectHandler}) => {
+
+  const dispatch = useDispatch()
 
   const currentCity = useSelector(store => store.weatherWidget.currentCity)
   const getWeatherStatus = useSelector(store => store.weatherWidget.getWeatherStatus)
@@ -35,6 +50,10 @@ const WeatherWidgetHeader = ({citySelectHandler}) => {
 
   const [isLoad, setIsLoad] = useState(false)
 
+  const selectCity = (id) => {
+    dispatch(setCity(citySelectArrMOC[id]))
+  }
+
   useEffect(() => {
     if(getWeatherStatus === 'resolved') {
       setIsLoad(true)
@@ -43,7 +62,6 @@ const WeatherWidgetHeader = ({citySelectHandler}) => {
     }
   }, [getWeatherStatus]);
 
-
   return (
     <Wrapper>
       <TopPart>
@@ -51,7 +69,7 @@ const WeatherWidgetHeader = ({citySelectHandler}) => {
           {isLoad ? currentCity.ru : '...'}
         </CurrentCityName>
         <CitySelector>
-          <p>Выбрать город</p>
+          <Select label={'Выбрать город'} optArr={citySelectArrMOC.map(el => el.ru)} handler={selectCity}/>
         </CitySelector>
       </TopPart>
       <MiddlePart className='lightGrayTextModifier'>
@@ -104,6 +122,7 @@ const Wrapper = styled.div`
 const TopPart = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `
 const CurrentCityName = styled.div`
   font-size: 30px;

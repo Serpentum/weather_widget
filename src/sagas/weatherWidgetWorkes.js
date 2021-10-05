@@ -43,16 +43,15 @@ export function* fetchForecast(action) {
   const city = action.payload
   // возникли проблемы с первым API немогу получить прогноз хоть убейся. Так что решил тянуть со второго, там всего 3 дня максимуму
   // но что поделать. Для примела days параметр оставил на 7.
-  const url = `http://api.weatherapi.com/v1/forecast.json?key=6736408151a5483aaca145316210410&q=${city}&days=7&aqi=no&alerts=no`
+  const url = `http://api.weatherapi.com/v1/forecast.json?key=6736408151a5483aaca145316210410&q=${city}&lang=ru&days=7&aqi=no&alerts=no`
 
   try {
     const req = yield fetch(url)
-    console.log(req)
     //we can handle here any status code, it's just for example
     if(req.status !== 200) { throw new Error('Something go wrong...') }
     const res = yield req.json()
 
-    yield put(setForecast({data: res, status: 'resolved'}))
+    yield put(setForecast({data: res.forecast.forecastday, status: 'resolved'}))
   } catch (e) {
     yield put(setForecast({err: e.message, status: 'rejected'}))
   }

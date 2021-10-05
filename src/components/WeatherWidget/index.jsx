@@ -4,6 +4,7 @@ import styled from "styled-components";
 import {getForecast, getGeocode, getWeather, setCity} from "../../redux/weatherWidgetReducer"
 import WeatherWidgetHeader from "./WeatherWidgetHeader"
 import WeatherWidgetContent from "./WeatherWidgetContent"
+import ForecastList from "./ForecastList"
 
 const defaultCity = 'Togliatti'
 
@@ -44,7 +45,7 @@ const WeatherWidget = () => {
       <WeatherWidgetHeader />
       {/*component composition demonstrating below*/}
       <WeatherWidgetContent>
-
+        <ForecastList />
       </WeatherWidgetContent>
     </WidgetWrapper>
   );
@@ -54,4 +55,6 @@ export default WeatherWidget;
 
 const WidgetWrapper = styled.div`
   width: 800px;
+  border-radius: 16px;
+  overflow: hidden;
 `
